@@ -1,0 +1,64 @@
+name: Inscription
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  inscribe:
+    runs-on: [self-hosted]
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+
+    - name: Read Issue and Create JSON
+      run: |
+        echo '{
+          "issue_id": "${{ github.event.issue.number }}",
+          "user": "${{ github.event.issue.user.login }}"
+        }' > latest.json && echo '${{ github.event.issue.body }}' > body.json
+
+    - name: Run script
+      run: |
+        cat latest.json
+        cat body.json
+        python3 scripts/process_inscription.py latest.json body.json > .result
+        cat .result
+
+    - name: Remove old JSON
+      run: |
+        rm latest.json body.json
+
+    - name: Commit and Push
+      id: commit
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "Add issue #${{ github.event.issue.number }} JSON"
+        git push
+        echo "::set-output name=commit::$(git rev-parse HEAD)"
+
+
+    - name: Read .result file
+      if: always()
+      id: read-file
+      run: echo "::set-output name=content::$(cat .result)"
+
+    - name: Post Comment
+      if: always()
+      uses: actions/github-script@v5
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          let commentBody = `${{ steps.read-file.outputs.content }}`;
+          const commit = `${{ steps.commit.outputs.commit }}`;
+          if (commit) {
+            commentBody += `\n\n[View Inscription](https://github.com/ghscr/ghscription/commit/${commit})`;
+          }
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: commentBody
+          })
