@@ -6,6 +6,8 @@ Tokens: https://github.com/ghscr/ghscription/blob/main/tokens.json
 
 Inscriptions: https://github.com/ghscr/ghscription/tree/main/inscriptions
 
+Join Telegram: https://t.me/+oaTuuPLnYaNjNDFh
+
 ### How it works?
 
 Add an issue to this repository with the following content. A bot would automatically commit a JSON if the issue is valid.
@@ -33,6 +35,9 @@ Example: https://github.com/ghscr/ghscription/issues/1
 ```
 Example: https://github.com/ghscr/ghscription/issues/2
 
+Example Inscription: https://github.com/ghscr/ghscription/blob/main/inscriptions/2.json 
+
+Due to ratelimit, it may take a few minutes to index. Issues are the source of truth. 
 
 **Token Transfer**  
 Cumming soon
