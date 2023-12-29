@@ -40,6 +40,7 @@ def get_issues(owner, repo, until=None):
 
 
 def post_comment_to_pr(owner, repo, pr_number, message):
+    return
     url = f"https://api.github.com/repos/{owner}/{repo}/issues/{pr_number}/comments"
     headers = {
         "Authorization": f"token {token}",
