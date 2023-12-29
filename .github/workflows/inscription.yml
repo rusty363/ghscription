@@ -9,7 +9,7 @@ jobs:
     runs-on: [self-hosted]
     steps:
     - name: Checkout Repo
-      uses: actions/checkout@v4
+      run: git pull
 
     - name: Read Issue and Create JSON
       run: |
@@ -20,7 +20,6 @@ jobs:
 
     - name: Run script
       run: |
-        git pull origin main
         cat latest.json
         cat body.json
         python3 scripts/process_inscription.py latest.json body.json > .result
