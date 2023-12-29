@@ -9,10 +9,11 @@ jobs:
     runs-on: [self-hosted]
     steps:
     - name: Checkout Repo
-      run: git pull
+      uses: actions/checkout@v4
 
     - name: Read Issue and Create JSON
       run: |
+        git pull
         echo '{
           "issue_id": "${{ github.event.issue.number }}",
           "user": "${{ github.event.issue.user.login }}"
