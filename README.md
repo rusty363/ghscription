@@ -22,7 +22,7 @@ Add an issue to this repository with the following content. A bot would automati
  "lim": "2000"
 }
 ```
-Example: https://github.com/ghscr/ghscription/issues/1
+Example: https://github.com/ghscr/ghscription/issues/8
 
 **Token Mint**
 ```
@@ -33,7 +33,7 @@ Example: https://github.com/ghscr/ghscription/issues/1
   "amt": "2000"
 }
 ```
-Example: https://github.com/ghscr/ghscription/issues/2
+Example: https://github.com/ghscr/ghscription/issues/9
 
 Example Inscription: https://github.com/ghscr/ghscription/blob/main/inscriptions/2.json 
 
