@@ -1,8 +1,6 @@
 name: Inscription
 
 on:
-  schedule:
-    - cron: "* * * * *"
   workflow_dispatch:
 
 
