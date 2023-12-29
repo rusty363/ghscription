@@ -1,64 +1,32 @@
 name: Inscription
 
 on:
-  issues:
-    types: [opened]
+  schedule:
+    - cron: "* * * * *"
+  workflow_dispatch:
+
 
 jobs:
   inscribe:
-    runs-on: [self-hosted]
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout Repo
-      run: git pull
+      uses: actions/checkout@v3
 
-    - name: Read Issue and Create JSON
+    - name: Pull Repo
       run: |
-        echo '{
-          "issue_id": "${{ github.event.issue.number }}",
-          "user": "${{ github.event.issue.user.login }}"
-        }' > latest.json && echo '${{ github.event.issue.body }}' > body.json
+        git pull
 
     - name: Run script
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        cat latest.json
-        cat body.json
-        python3 scripts/process_inscription.py latest.json body.json > .result
-        cat .result
-
-    - name: Remove old JSON
+        python3 scripts/process_v2.py
+    
+    - name: Commit and push changes
       run: |
-        rm latest.json body.json
-
-    - name: Commit and Push
-      id: commit
-      run: |
-        git config user.name github-actions
-        git config user.email github-actions@github.com
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
         git add .
-        git commit -m "Add issue #${{ github.event.issue.number }} JSON"
+        git commit -m "Update inscription list"
         git push
-        echo "::set-output name=commit::$(git rev-parse HEAD)"
-
-
-    - name: Read .result file
-      if: always()
-      id: read-file
-      run: echo "::set-output name=content::$(cat .result)"
-
-    - name: Post Comment
-      if: always()
-      uses: actions/github-script@v5
-      with:
-        github-token: ${{secrets.GITHUB_TOKEN}}
-        script: |
-          let commentBody = `${{ steps.read-file.outputs.content }}`;
-          const commit = `${{ steps.commit.outputs.commit }}`;
-          if (commit) {
-            commentBody += `\n\n[View Inscription](https://github.com/ghscr/ghscription/commit/${commit})`;
-          }
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: commentBody
-          })
